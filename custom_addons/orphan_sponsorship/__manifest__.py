@@ -1,5 +1,6 @@
 {
     'name': 'Orphan Sponsorship',
+    'license': 'LGPL-3',
     'version': '17.0.1.0.0',
     'summary': 'Manage orphan sponsorships and auto-assign donors',
     'category': 'Social',
