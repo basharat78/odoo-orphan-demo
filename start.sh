@@ -79,4 +79,4 @@ else
   echo "==> Database ready. Starting server..."
 fi
 
-exec odoo $DB_ARGS --http-port="${PORT:-8069}"
+exec odoo $DB_ARGS --http-port=8069
