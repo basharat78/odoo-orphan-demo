@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_orphan_user,orphan.user,model_orphan_sponsorship_orphan,,1,1,1,1
+access_donor_user,donor.user,model_orphan_sponsorship_donor,,1,1,1,1
+access_demo_panel_user,demo.panel.user,model_orphan_sponsorship_demo,,1,1,1,1

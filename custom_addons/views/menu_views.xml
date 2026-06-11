@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_orphan_sponsorship_root"
+              name="Orphan Sponsorship"
+              sequence="10"/>
+
+    <menuitem id="menu_orphan_sponsorship_orphans"
+              name="Orphans"
+              parent="menu_orphan_sponsorship_root"
+              action="action_orphan"
+              sequence="10"/>
+
+    <menuitem id="menu_orphan_sponsorship_donors"
+              name="Donors"
+              parent="menu_orphan_sponsorship_root"
+              action="action_donor"
+              sequence="20"/>
+
+    <menuitem id="menu_orphan_sponsorship_demo"
+              name="Demo Control Panel"
+              parent="menu_orphan_sponsorship_root"
+              action="action_open_demo_panel"
+              sequence="99"/>
+</odoo>
