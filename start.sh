@@ -53,17 +53,28 @@ DB_ARGS="
   --without-demo=all
 "
 
-# Check if already initialized
-INITIALIZED=$(PGPASSWORD="${PGPASSWORD}" psql \
+# Check if base is initialized
+BASE_INSTALLED=$(PGPASSWORD="${PGPASSWORD}" psql \
   -h "${PGHOST}" -p "${PGPORT:-5432}" \
   -U "${PGUSER}" -d "${PGDATABASE:-odoo}" \
   -tAc "SELECT COUNT(*) FROM ir_module_module WHERE name='base' AND state='installed';" \
   2>/dev/null || echo "0")
 
-if [ "$INITIALIZED" = "0" ]; then
+# Check if our custom module is installed
+MODULE_INSTALLED=$(PGPASSWORD="${PGPASSWORD}" psql \
+  -h "${PGHOST}" -p "${PGPORT:-5432}" \
+  -U "${PGUSER}" -d "${PGDATABASE:-odoo}" \
+  -tAc "SELECT COUNT(*) FROM ir_module_module WHERE name='orphan_sponsorship' AND state='installed';" \
+  2>/dev/null || echo "0")
+
+if [ "$BASE_INSTALLED" = "0" ]; then
   echo "==> First run: initializing Odoo database (~5 min)..."
   odoo $DB_ARGS --init=base,orphan_sponsorship --stop-after-init
   echo "==> Done. Starting server..."
+elif [ "$MODULE_INSTALLED" = "0" ]; then
+  echo "==> Installing orphan_sponsorship module..."
+  odoo $DB_ARGS --init=orphan_sponsorship --stop-after-init
+  echo "==> Module installed. Starting server..."
 else
   echo "==> Database ready. Starting server..."
 fi
