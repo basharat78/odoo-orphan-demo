@@ -7,19 +7,39 @@ if [ -z "$PGHOST" ] && [ -n "$DATABASE_URL" ]; then
   eval $(python3 -c "
 import urllib.parse, os
 url = urllib.parse.urlparse(os.environ['DATABASE_URL'])
-print('export PGUSER=\"'  + (url.username or '') + '\"')
+print('export PGUSER=\"'     + (url.username or '') + '\"')
 print('export PGPASSWORD=\"' + (url.password or '') + '\"')
-print('export PGHOST=\"'  + (url.hostname or '') + '\"')
-print('export PGPORT=\"'  + str(url.port or 5432) + '\"')
+print('export PGHOST=\"'     + (url.hostname or '') + '\"')
+print('export PGPORT=\"'     + str(url.port or 5432) + '\"')
 print('export PGDATABASE=\"' + url.path.lstrip('/') + '\"')
 ")
 fi
 
-echo "==> DB connection: ${PGUSER}@${PGHOST}:${PGPORT:-5432}/${PGDATABASE:-odoo}"
+echo "==> DB connection: ${PGUSER}@${PGHOST}:${PGPORT:-5432}/${PGDATABASE}"
 
 if [ -z "$PGHOST" ]; then
-  echo "ERROR: PGHOST is still empty. DATABASE_URL or PGHOST must be set."
+  echo "ERROR: PGHOST is empty. Set DATABASE_URL in Railway variables."
   exit 1
+fi
+
+# Odoo refuses to run as 'postgres' superuser — create a dedicated odoo user
+if [ "$PGUSER" = "postgres" ]; then
+  echo "==> Creating dedicated 'odoo' database user..."
+  PGPASSWORD="${PGPASSWORD}" psql \
+    -h "${PGHOST}" -p "${PGPORT:-5432}" \
+    -U "postgres" -d "${PGDATABASE}" <<-SQL 2>/dev/null || true
+      DO \$\$
+      BEGIN
+        IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'odoo') THEN
+          CREATE USER odoo WITH CREATEDB LOGIN PASSWORD 'odoo_railway_2024';
+        END IF;
+      END \$\$;
+      GRANT ALL PRIVILEGES ON DATABASE "${PGDATABASE}" TO odoo;
+      ALTER DATABASE "${PGDATABASE}" OWNER TO odoo;
+SQL
+  export PGUSER=odoo
+  export PGPASSWORD=odoo_railway_2024
+  echo "==> Switched to 'odoo' user"
 fi
 
 DB_ARGS="
