@@ -1,6 +1,18 @@
 #!/bin/bash
 set -e
 
+# If individual PG vars are missing, parse them from DATABASE_URL
+if [ -z "$PGHOST" ] && [ -n "$DATABASE_URL" ]; then
+  echo "==> Parsing DATABASE_URL..."
+  export PGUSER=$(echo "$DATABASE_URL"     | sed -n 's|.*://\([^:]*\):.*|\1|p')
+  export PGPASSWORD=$(echo "$DATABASE_URL" | sed -n 's|.*://[^:]*:\([^@]*\)@.*|\1|p')
+  export PGHOST=$(echo "$DATABASE_URL"     | sed -n 's|.*@\([^:/]*\).*|\1|p')
+  export PGPORT=$(echo "$DATABASE_URL"     | sed -n 's|.*:\([0-9]\+\)/.*|\1|p')
+  export PGDATABASE=$(echo "$DATABASE_URL" | sed -n 's|.*/\([^?]*\)|\1|p')
+fi
+
+echo "==> Connecting to: ${PGUSER}@${PGHOST}:${PGPORT:-5432}/${PGDATABASE}"
+
 DB_ARGS="
   --db_host=${PGHOST}
   --db_port=${PGPORT:-5432}
@@ -13,7 +25,7 @@ DB_ARGS="
 "
 
 # Check if database has already been initialized
-INITIALIZED=$(psql "postgresql://${PGUSER}:${PGPASSWORD}@${PGHOST}:${PGPORT:-5432}/${PGDATABASE:-odoo}" \
+INITIALIZED=$(PGPASSWORD="${PGPASSWORD}" psql -h "${PGHOST}" -p "${PGPORT:-5432}" -U "${PGUSER}" -d "${PGDATABASE:-odoo}" \
   -tAc "SELECT COUNT(*) FROM ir_module_module WHERE name='base' AND state='installed';" 2>/dev/null || echo "0")
 
 if [ "$INITIALIZED" = "0" ]; then
@@ -21,7 +33,7 @@ if [ "$INITIALIZED" = "0" ]; then
   odoo $DB_ARGS --init=base,orphan_sponsorship --stop-after-init
   echo "==> Init complete. Starting server..."
 else
-  echo "==> Database exists. Starting server..."
+  echo "==> Database ready. Starting server..."
 fi
 
 exec odoo $DB_ARGS --http-port="${PORT:-8069}"
