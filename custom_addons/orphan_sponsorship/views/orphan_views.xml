@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_orphan_list" model="ir.ui.view">
+        <field name="name">orphan.list</field>
+        <field name="model">orphan.sponsorship.orphan</field>
+        <field name="arch" type="xml">
+            <tree string="Orphans">
+                <field name="name"/>
+                <field name="age"/>
+                <field name="gender"/>
+                <field name="location"/>
+                <field name="status" decoration-success="status=='sponsored'" decoration-warning="status=='unassigned'"/>
+                <field name="donor_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_orphan_form" model="ir.ui.view">
+        <field name="name">orphan.form</field>
+        <field name="model">orphan.sponsorship.orphan</field>
+        <field name="arch" type="xml">
+            <form string="Orphan">
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="Orphan Name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="age"/>
+                            <field name="gender"/>
+                            <field name="location"/>
+                        </group>
+                        <group>
+                            <field name="status"/>
+                            <field name="donor_id"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Notes">
+                            <field name="notes"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_orphan" model="ir.actions.act_window">
+        <field name="name">Orphans</field>
+        <field name="res_model">orphan.sponsorship.orphan</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+</odoo>
