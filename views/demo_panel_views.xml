@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ── Form view ─────────────────────────────────────────────────── -->
+    <record id="view_demo_panel_form" model="ir.ui.view">
+        <field name="name">orphan.sponsorship.demo.form</field>
+        <field name="model">orphan.sponsorship.demo</field>
+        <field name="arch" type="xml">
+            <form string="Demo Control Panel" create="false" delete="false" edit="false">
+                <sheet>
+
+                    <!-- Title -->
+                    <div class="oe_title">
+                        <h1>Orphan Sponsorship — Live Demo</h1>
+                        <p class="text-muted" style="font-size:14px;">
+                            Run the steps in order. Each button reads from the Excel file and updates the system instantly.
+                        </p>
+                    </div>
+
+                    <!-- Live stats bar -->
+                    <group string="Current Status" col="4">
+                        <field name="orphan_total"      string="Total Orphans"   readonly="1"/>
+                        <field name="orphan_unassigned" string="Unassigned"      readonly="1"/>
+                        <field name="orphan_sponsored"  string="Sponsored"       readonly="1"/>
+                        <field name="donor_active"      string="Active Donors"   readonly="1"/>
+                    </group>
+
+                    <separator/>
+
+                    <!-- Step buttons -->
+                    <div class="row mt8 mb8" style="gap:0;">
+
+                        <div class="col-lg-3 col-md-6 mb8 pe-2">
+                            <div class="card h-100 border-primary">
+                                <div class="card-header bg-primary text-white fw-bold">
+                                    Step 1
+                                </div>
+                                <div class="card-body">
+                                    <p class="card-text small">
+                                        Reads <b>orphans_data.xlsx</b> and imports
+                                        10 orphans — all start as <i>Unassigned</i>.
+                                    </p>
+                                    <button name="action_step1_load_orphans" type="object"
+                                            string="Load Orphans from Excel"
+                                            class="btn btn-primary w-100"/>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-3 col-md-6 mb8 pe-2">
+                            <div class="card h-100 border-success">
+                                <div class="card-header bg-success text-white fw-bold">
+                                    Step 2
+                                </div>
+                                <div class="card-body">
+                                    <p class="card-text small">
+                                        Reads <b>donors_data.xlsx</b> and imports 5 donors.
+                                        Each donor is <i>instantly auto-assigned</i> an orphan.
+                                    </p>
+                                    <button name="action_step2_add_donors" type="object"
+                                            string="Import Donors — Watch Auto-Assign"
+                                            class="btn btn-success w-100"/>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-3 col-md-6 mb8 pe-2">
+                            <div class="card h-100 border-warning">
+                                <div class="card-header bg-warning fw-bold">
+                                    Step 3
+                                </div>
+                                <div class="card-body">
+                                    <p class="card-text small">
+                                        Cancels all donors. Every assigned orphan is
+                                        <i>released back</i> to Unassigned automatically.
+                                    </p>
+                                    <button name="action_step3_cancel_donors" type="object"
+                                            string="Cancel Donors — Release Orphans"
+                                            class="btn btn-warning w-100"/>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-3 col-md-6 mb8">
+                            <div class="card h-100 border-danger">
+                                <div class="card-header bg-danger text-white fw-bold">
+                                    Reset
+                                </div>
+                                <div class="card-body">
+                                    <p class="card-text small">
+                                        Deletes all orphans and donors and clears the log.
+                                        Use this to start a <i>fresh demo</i>.
+                                    </p>
+                                    <button name="action_reset" type="object"
+                                            string="Reset Demo"
+                                            class="btn btn-danger w-100"
+                                            confirm="This will delete ALL orphan and donor records. Continue?"/>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <separator string="Activity Log"/>
+
+                    <field name="activity_log" readonly="1"
+                           style="font-family: monospace; font-size: 13px;
+                                  background: #f8f9fa; min-height: 280px;
+                                  border: 1px solid #dee2e6; border-radius: 4px;
+                                  padding: 12px; white-space: pre-wrap;"/>
+
+                    <!-- Quick nav buttons at bottom -->
+                    <div class="mt16">
+                        <separator string="Quick Navigation"/>
+                        <div class="row">
+                            <div class="col-6">
+                                <a role="button" class="btn btn-outline-secondary w-100"
+                                   href="/odoo/orphan-sponsorship-orphan" target="_self">
+                                    View All Orphans
+                                </a>
+                            </div>
+                            <div class="col-6">
+                                <a role="button" class="btn btn-outline-secondary w-100"
+                                   href="/odoo/orphan-sponsorship-donor" target="_self">
+                                    View All Donors
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ── Server action to open the singleton ──────────────────────── -->
+    <record id="action_open_demo_panel" model="ir.actions.server">
+        <field name="name">Open Demo Panel</field>
+        <field name="model_id" ref="model_orphan_sponsorship_demo"/>
+        <field name="state">code</field>
+        <field name="code">action = env['orphan.sponsorship.demo'].open_demo_panel()</field>
+    </record>
+
+</odoo>

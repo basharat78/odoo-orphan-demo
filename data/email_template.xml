@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <record id="email_template_donor_assigned" model="mail.template">
+        <field name="name">Orphan Sponsorship — Donor Assignment Notification</field>
+        <field name="model_id" ref="model_orphan_sponsorship_donor"/>
+        <field name="subject">You are now sponsoring {{ object.orphan_ids[:1].name }} — Orphan Sponsorship Confirmation</field>
+        <field name="email_from">mbasharat596@gmail.com</field>
+        <field name="email_to">{{ object.email }}</field>
+        <field name="body_html" type="html">
+            <div style="font-family: Arial, sans-serif; max-width: 620px; margin: 0 auto; background: #f0f4f0;">
+
+                <div style="background: #1F7A4A; padding: 36px 30px; text-align: center; border-radius: 10px 10px 0 0;">
+                    <h1 style="color: #ffffff; margin: 0; font-size: 26px; letter-spacing: 1px;">Orphan Sponsorship Program</h1>
+                    <p style="color: #a8d5b5; margin: 8px 0 0; font-size: 14px;">Sponsorship Confirmation</p>
+                </div>
+
+                <div style="background: #ffffff; padding: 36px 30px;">
+                    <p style="font-size: 17px; color: #222; margin-top: 0;">
+                        Dear <strong>{{ object.name }}</strong>,
+                    </p>
+                    <p style="color: #555; line-height: 1.7; font-size: 15px;">
+                        Congratulations and thank you for your generous heart! Your sponsorship has been confirmed.
+                        You have been matched with a child who will benefit greatly from your support.
+                    </p>
+
+                    <div style="background: #f8fdf9; border: 1px solid #c3e6cb; border-left: 5px solid #1F7A4A; border-radius: 8px; padding: 24px 28px; margin: 28px 0;">
+                        <h2 style="color: #1F7A4A; margin: 0 0 18px; font-size: 17px;">Your Sponsored Child</h2>
+                        <table style="width: 100%; border-collapse: collapse; font-size: 15px;">
+                            <tr>
+                                <td style="padding: 7px 0; color: #888; width: 35%;">Full Name</td>
+                                <td style="color: #222; font-weight: bold;">{{ object.orphan_ids[:1].name }}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 7px 0; color: #888;">Age</td>
+                                <td style="color: #222;">{{ object.orphan_ids[:1].age }} years old</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 7px 0; color: #888;">Gender</td>
+                                <td style="color: #222;">{% if object.orphan_ids[:1].gender == 'male' %}Boy{% else %}Girl{% endif %}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 7px 0; color: #888;">City</td>
+                                <td style="color: #222;">{{ object.orphan_ids[:1].location or 'N/A' }}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 7px 0; color: #888; vertical-align: top;">About</td>
+                                <td style="color: #555; font-style: italic;">{{ object.orphan_ids[:1].notes or '' }}</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <p style="color: #555; line-height: 1.7; font-size: 15px;">
+                        Your sponsorship provides this child with hope, security, and a brighter future.
+                        Every contribution you make directly impacts their life. We are deeply grateful
+                        for your kindness and commitment.
+                    </p>
+                    <p style="color: #555; font-size: 15px; margin-bottom: 0;">
+                        With sincere gratitude,<br/>
+                        <strong style="color: #1F7A4A;">Orphan Sponsorship Team</strong>
+                    </p>
+                </div>
+
+                <div style="background: #f0f4f0; padding: 18px 30px; text-align: center; border-radius: 0 0 10px 10px;">
+                    <p style="color: #aaa; font-size: 12px; margin: 0;">
+                        This email was sent from the Orphan Sponsorship Program.
+                    </p>
+                </div>
+
+            </div>
+        </field>
+    </record>
+
+</odoo>

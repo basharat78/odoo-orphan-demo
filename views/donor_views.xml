@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_donor_list" model="ir.ui.view">
+        <field name="name">donor.list</field>
+        <field name="model">orphan.sponsorship.donor</field>
+        <field name="arch" type="xml">
+            <tree string="Donors">
+                <field name="name"/>
+                <field name="email"/>
+                <field name="phone"/>
+                <field name="state" decoration-success="state=='active'" decoration-danger="state=='cancelled'"/>
+                <field name="orphan_count"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_donor_form" model="ir.ui.view">
+        <field name="name">donor.form</field>
+        <field name="model">orphan.sponsorship.donor</field>
+        <field name="arch" type="xml">
+            <form string="Donor">
+                <header>
+                    <button name="action_activate" string="Activate" type="object"
+                            invisible="state == 'active'" class="btn-primary"/>
+                    <button name="action_cancel" string="Cancel Sponsorship" type="object"
+                            invisible="state == 'cancelled'" class="btn-danger"/>
+                    <field name="state" widget="statusbar" statusbar_visible="active,cancelled"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="Donor Name"/></h1>
+                    </div>
+                    <group>
+                        <field name="email"/>
+                        <field name="phone"/>
+                    </group>
+                    <notebook>
+                        <page string="Sponsored Orphans">
+                            <field name="orphan_ids">
+                                <tree>
+                                    <field name="name"/>
+                                    <field name="age"/>
+                                    <field name="location"/>
+                                    <field name="status"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_donor" model="ir.actions.act_window">
+        <field name="name">Donors</field>
+        <field name="res_model">orphan.sponsorship.donor</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+</odoo>
